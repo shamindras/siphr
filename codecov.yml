@@ -8,3 +8,5 @@ coverage:
         target: "100"
 comment:
   require_changes: true
+codecov:
+  token: 5f112347-9b7f-445f-a4cc-2571814b248b
