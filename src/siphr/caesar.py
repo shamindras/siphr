@@ -1,50 +1,62 @@
 import string
-from typing import List
+from typing import List, Dict
 
-def get_substitution_map(alphabet: str, shift: int) -> dict:
-    alphabet_conv = alphabet.lower()
-    shifted_alphabet = alphabet_conv[shift:] + alphabet_conv[:shift]
-    return str.maketrans(alphabet_conv, shifted_alphabet)
+def get_substitution_map(alphabets: List[str], shift: int) -> Dict[int, int]:
+    """Get substitution cipher map for a given list of alphabet strings and
+common forward shift parameter. The map will be for the concatenated shifted
+alphabet strings.
 
-def get_substitution_map2(alphabets: List[str], shift: int) -> dict:
+    Args:
+        alphabets (List[str]): List of alphabet strings.
+        shift (int): A integer shift for the substitution cipher.
+
+    Returns:
+        Dict[int, int]: A dictionary mapping for the shifted substitution
+cipher.
+    """
     shifted_alphabets = [alphabet[shift:] + alphabet[:shift]
                          for alphabet in alphabets]
     return str.maketrans("".join(alphabets), "".join(shifted_alphabets))
 
-def reverse_map(cipher_map: dict) -> dict:
+def get_reverse_map(cipher_map: Dict[int, int]) -> Dict[int, int]:
+    """Reverse a given (key-value) cipher map.
+
+    Args:
+        cipher_map (Dict[int, int]): A cipher map, typically derived from the
+substitution cipher with given shift.
+
+    Returns:
+        Dict[int, int]: The reversed (key-value) cipher map.
+    """
     return {val: ky for ky, val in cipher_map.items()}
 
-def get_substitution_encipher(plaintext: str, cipher_map: dict) -> str:
-    return plaintext.translate(cipher_map)
+def get_translate(plain_text: str, cipher_map: Dict[int, int]) -> str:
+    """Get a plain text translation based on a given substitution cipher map.
 
+    Args:
+        plain_text (str): The input plain text to encipher or decipher.
+        cipher_map (Dict[int, int]): The given key-value cipher map.
 
+    Returns:
+        str: The converted plain text after applying the substitution cipher
+map.
+    """
+    return plain_text.translate(cipher_map)
 
-table = get_substitution_map(alphabet=string.ascii_lowercase, shift=3)
-table2 = get_substitution_map2(alphabets=[string.ascii_lowercase],
-                               shift=3)
-table3 = get_substitution_map2(alphabets=[string.ascii_lowercase,
-                                          string.ascii_uppercase],
-                               shift=3)
+# Get input plain_text to convert
+plain_text = 'THE QUICK BROWN FOX JUMPS OVER THE LAZY dog?!#$@$a%% dOG'
+print(f"plain_text: {plain_text}")
 
-
-plaintext = 'THE QUICK BROWN FOX JUMPS OVER THE LAZY dog?!#$@$a dOG'
-print(f"plaintext: {plaintext}")
+encipher_map = get_substitution_map(alphabets=[string.ascii_lowercase,
+                                               string.ascii_uppercase],
+                                    shift=3)
 
 # Encryption
-encrypttext = plaintext.translate(table)
-encrypttext2 = plaintext.translate(table2)
-encrypttext3 = plaintext.translate(table3)
-print(f"encrypttext: {encrypttext}")
-print(f"encrypttext2: {encrypttext2}")
-print(f"encrypttext3: {encrypttext3}")
+# encipher_text = plain_text.translate(encipher_map)
+encipher_text = get_translate(plain_text=plain_text, cipher_map=encipher_map)
+print(f"encipher_text: {encipher_text}")
 
 # Decryption
-reverse_table = reverse_map(cipher_map=table)
-reverse_table2 = reverse_map(cipher_map=table2)
-reverse_table3 = reverse_map(cipher_map=table3)
-decrypttext = encrypttext.translate(reverse_table)
-decrypttext2 = encrypttext2.translate(reverse_table2)
-decrypttext3 = encrypttext3.translate(reverse_table3)
-print(f"decrypttext: {decrypttext}")
-print(f"decrypttext2: {decrypttext2}")
-print(f"decrypttext3: {decrypttext3}")
+decipher_map = get_reverse_map(cipher_map=encipher_map)
+decipher_text = get_translate(plain_text=encipher_text, cipher_map=decipher_map)
+print(f"decipher_text: {decipher_text}")
